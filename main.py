@@ -25,7 +25,39 @@ welcome_rect = welcome_render.get_rect()
 welcome_rect.center = [screen.get_width() // 2, 40]
 a = 1
 score_text = "0"
-#setu
+#gameover function 
+def gameover(score, reason):
+    if reason == "collision":
+        over_text = f"YOU COLLIDED WITH AN ENEMY SPACE CRAFT !! SCORE : {str(score)}"
+    if reason == "passby":
+        over_text = f"ENEMY TOOK CONTROL OVER EARTH, WE LOSE!! SCORE : {str(score)}"
+    over_render = font.render(over_text, True, (255,255,255), (0,0,0))
+    over_rect = over_render.get_rect()
+    over_rect.center = [screen.get_width() // 2, 500]
+    pygame.mixer.Channel(0).play(pygame.mixer.Sound("music/gameover.wav"))
+    while True: 
+        screen.fill((0,0,0))
+        screen.blit(over_render, over_rect)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_x:
+                    pygame.quit()
+        pygame.display.update()
+#setup
+def setup():
+    pygame.mixer.Channel(0).play(pygame.mixer.Sound("music/bg.mp3"))
+    screen.fill(black)
+    while True:
+        screen.blit(welcome_render, welcome_rect)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    game()
+        pygame.display.flip()
 def game():
     #player variables
     global score_text, score_render, score_rect, player_sprite, player_location, player_rect, move_up, move_down, move_left, move_right, fire, player_speed
@@ -107,7 +139,7 @@ def game():
                     fire = False
                     enemy_location[1] = 0
                     enemy_location[0] = random.randint(0, 600)
-                    enemy_speed += 0.1
+                    enemy_speed += 0.1  
                     score += 1
                     score_text = f"TAKEDOWNS :{str(score)} FLEW PAST : {str(3 - life)}" if life > 1 else f"TAKEDOWNS :{str(score)} FLEW PAST : {str(3 - life)}, ONE MORE PASSBY AND WE LOSE!"
                     score_render = font.render(score_text, True, (255, 255, 255), (0,0,0))
